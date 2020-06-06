@@ -10,12 +10,16 @@ def get_file_from_s3(s3_client, complete_file_path, cache):
 
     object = '/'.join(broken_down[1:])
 
-    filename = os.path.join(cache, '-'.join(broken_down[1:]))
+    filename = os.path.join(cache, '-'.join(broken_down))
 
     if not os.path.exists(filename):
         for i in range(100):
             try:
                 s3_client.download_file(bucket, object, filename)
+
+                if not os.path.exists(filename):
+                    raise IOError('File not found.')
+
                 break
             except:
                 print('There were problems retrieving the file. Attempt {}'.format(i))
