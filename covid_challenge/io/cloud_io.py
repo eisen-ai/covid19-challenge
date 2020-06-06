@@ -3,6 +3,7 @@ import os
 import nibabel as nib
 
 from eisen.io import LoadNiftiFromFilename
+from covid_challenge import get_file_from_s3
 
 
 class LoadS3Nifti(LoadNiftiFromFilename):
@@ -36,23 +37,7 @@ class LoadS3Nifti(LoadNiftiFromFilename):
 
             complete_file_path = os.path.join(self.data_dir, data[field])
 
-            without_prefix = complete_file_path[5:]
-
-            broken_down = without_prefix.split('/')
-
-            bucket = broken_down[0]
-
-            object = '/'.join(broken_down[1:])
-
-            filename = os.path.join(self.cache, '-'.join(broken_down[1:]))
-
-            if not os.path.exists(filename):
-                for i in range(100):
-                    try:
-                        self.s3_client.download_file(bucket, object, filename)
-                        break
-                    except:
-                        print('There were problems retrieving the file. Attempt {}'.format(i))
+            filename = get_file_from_s3(self.s3_client, complete_file_path, self.cache)
 
             img = nib.load(filename)
 

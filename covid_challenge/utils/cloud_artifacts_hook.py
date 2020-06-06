@@ -5,6 +5,7 @@ import boto3
 
 from pydispatch import dispatcher
 from eisen import EISEN_END_EPOCH_EVENT
+from covid_challenge import put_file_on_s3
 
 
 class SaveCloudArtifactsHook:
@@ -33,16 +34,4 @@ class SaveCloudArtifactsHook:
 
         shutil.make_archive(zip_filename, 'zip', self.artifacts_dir)
 
-        without_prefix = self.s3_save_object[5:]
-
-        broken_down = without_prefix.split('/')
-
-        bucket = broken_down[0]
-
-        object = '/'.join(broken_down[1:])
-
-        for i in range(100):
-            try:
-                self.s3_client.upload_file(zip_filename, bucket, object)
-            except:
-                print('there was a problem uploading results to s3. Attempt {}'.format(i))
+        put_file_on_s3(self.s3_client, zip_filename, self.s3_save_object)
