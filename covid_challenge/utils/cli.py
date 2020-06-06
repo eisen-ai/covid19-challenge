@@ -3,9 +3,9 @@ import boto3
 import os
 import tempfile
 import json
-import subprocess
 
 from time import sleep
+from subprocess import Popen
 
 
 s3 = boto3.client('s3')
@@ -28,6 +28,7 @@ config_path = os.path.join(dirpath, 'config.json')
 with open(config_path, 'w') as f:
     json.dump(config, f)
 
+
 eisen_cmd = ['python3',
              '/opt/conda/bin/eisen',
              'train',
@@ -39,7 +40,12 @@ eisen_cmd = ['python3',
 
 print('I am about to run Eisen via: {}'.format(eisen_cmd))
 
+training = Popen(eisen_cmd)
 
-training = subprocess.call(eisen_cmd)
+while True:
+    retcode = training.poll()
 
-exit(training)
+    sleep(10)
+
+    if retcode is not None:
+        exit(retcode)
