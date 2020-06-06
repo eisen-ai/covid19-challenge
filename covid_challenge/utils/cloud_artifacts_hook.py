@@ -32,6 +32,6 @@ class SaveCloudArtifactsHook:
     def end_epoch(self, message):
         filename = os.path.join(self.tempdir, 'artifacts')
 
-        zip_filename = shutil.make_archive(filename, 'zip', self.artifacts_dir)
+        zip_filename = shutil.make_archive(filename, 'zip', self.artifacts_dir + '/*')
 
         put_file_on_s3(self.s3_client, zip_filename, self.s3_save_object)
