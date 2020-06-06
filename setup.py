@@ -15,6 +15,8 @@ setup(
     install_requires=install_requires,
     python_requires='>=3.6',
     entry_points={
-        'console_scripts': [],
+        'console_scripts': [
+            'eisen_covid = covid_challenge.utils:cli'
+        ],
     },
 )
