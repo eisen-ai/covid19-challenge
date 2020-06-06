@@ -27,6 +27,8 @@ class LoadS3Nifti:
         self.data_dir = data_dir
         self.canonical = canonical
 
+        assert self.data_dir[0:5] == 's3://'
+
     def __call__(self, data):
         """
         :param data: Data dictionary to be processed by this transform
