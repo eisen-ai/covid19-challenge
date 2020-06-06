@@ -26,7 +26,7 @@ def get_file_from_s3(s3_client, complete_file_path, cache):
 def put_file_on_s3(s3_client, local_file_path, remote_file_path):
     if not os.path.exists(local_file_path):
         print('You want to upload a file that does not exist. Aborting...')
-        
+
     without_prefix = remote_file_path[5:]
 
     broken_down = without_prefix.split('/')
