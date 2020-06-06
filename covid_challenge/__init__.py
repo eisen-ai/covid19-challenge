@@ -2,6 +2,9 @@ import os
 
 
 def get_file_from_s3(s3_client, complete_file_path, cache):
+    if not complete_file_path[0:5] == 's3://':
+        return complete_file_path
+
     without_prefix = complete_file_path[5:]
 
     broken_down = without_prefix.split('/')
@@ -16,9 +19,6 @@ def get_file_from_s3(s3_client, complete_file_path, cache):
         for i in range(100):
             try:
                 s3_client.download_file(bucket, object, filename)
-
-                if not os.path.exists(filename):
-                    raise IOError('File not found.')
 
                 break
             except:
