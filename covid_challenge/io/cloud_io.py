@@ -2,11 +2,10 @@ import boto3
 import os
 import nibabel as nib
 
-from eisen.io import LoadNiftiFromFilename
 from covid_challenge import get_file_from_s3
 
 
-class LoadS3Nifti(LoadNiftiFromFilename):
+class LoadS3Nifti:
     """
     This transform loads Nifti data from the cloud and specifically from S3.
 
@@ -15,9 +14,7 @@ class LoadS3Nifti(LoadNiftiFromFilename):
         tform = LoadS3Nifti(['image', 'label'], 's3://bucket/path/')
     """
 
-    def __init__(self, *args, aws_id=None, aws_secret=None, cache='/cache', **kwargs):
-        super(LoadS3Nifti, self).__init__(*args, **kwargs)
-
+    def __init__(self, fields, data_dir, canonical=False, aws_id=None, aws_secret=None, cache='/cache'):
         self.cache = cache
 
         self.s3_client = boto3.client(
@@ -25,6 +22,10 @@ class LoadS3Nifti(LoadNiftiFromFilename):
             aws_access_key_id=aws_id,
             aws_secret_access_key=aws_secret
         )
+
+        self.fields = fields
+        self.data_dir = data_dir
+        self.canonical = canonical
 
     def __call__(self, data):
         """
