@@ -1,7 +1,6 @@
 import boto3
 import os
 import nibabel as nib
-import logging
 
 from covid_challenge import get_file_from_s3
 
@@ -46,9 +45,6 @@ class LoadS3Nifti:
             filename = get_file_from_s3(self.s3_client, complete_file_path, self.cache)
 
             img = nib.load(filename)
-
-            logging.info(filename)
-            print(filename)
 
             if self.canonical:
                 img = nib.as_closest_canonical(img)
