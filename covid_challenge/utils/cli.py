@@ -18,6 +18,8 @@ config_path = os.path.join(results, 'config.json')
 
 os.makedirs(results)
 
+print(config)
+
 with open(config_path, 'wb') as f:
     s3.download_fileobj('configurations-challenge', config, f)
 
