@@ -37,6 +37,8 @@ class LoadS3Nifti(LoadNiftiFromFilename):
 
             complete_file_path = os.path.join(self.data_dir, data[field])
 
+            print(complete_file_path)
+
             filename = get_file_from_s3(self.s3_client, complete_file_path, self.cache)
 
             img = nib.load(filename)
