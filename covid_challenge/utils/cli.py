@@ -3,9 +3,9 @@ import boto3
 import os
 import tempfile
 import json
+import subprocess
 
 from time import sleep
-from subprocess import Popen
 
 
 s3 = boto3.client('s3')
@@ -39,15 +39,6 @@ eisen_cmd = ['python3',
 
 print('I am about to run Eisen via: {}'.format(eisen_cmd))
 
-training = Popen(eisen_cmd)
+retcode = subprocess.call(eisen_cmd, shell=True)
 
-
-
-
-while True:
-    retcode = training.poll()
-
-    sleep(300)
-
-    if retcode is not None:
-        exit(retcode)
+exit(retcode)
