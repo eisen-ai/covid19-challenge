@@ -1,4 +1,4 @@
-import os
+from flask import Flask
 
 from subprocess import Popen
 
@@ -14,10 +14,11 @@ print('I am about to run Tensorboard via: {}'.format(tb_cmd))
 
 tb_process = Popen(tb_cmd)
 
-while True:
-    retcode = tb_process.poll()
+app = Flask(__name__)
 
-    if os.path.exists('/tmp/results/terminate'):
-        tb_process.terminate()
+@app.route('/')
+def hello_world():
+    tb_process.terminate()
+    exit(0)
 
-        exit(tb_process.poll())
+app.run(host='0.0.0.0', port='6006')

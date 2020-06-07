@@ -4,18 +4,18 @@ import os
 import tempfile
 import json
 import signal
+import requests
 
 from time import sleep
 from subprocess import Popen
 
 
-def create_tb_termination_flag():
-    with open('/tmp/results/terminate', 'w') as f:
-        f.write('')
+def terminate_tensorboard():
+    requests.get('http://127.0.0.1:6006/')
 
 
-signal.signal(signal.SIGINT, create_tb_termination_flag)
-signal.signal(signal.SIGTERM, create_tb_termination_flag)
+signal.signal(signal.SIGINT, terminate_tensorboard)
+signal.signal(signal.SIGTERM, terminate_tensorboard)
 
 s3 = boto3.client('s3')
 
@@ -57,5 +57,5 @@ while True:
     sleep(10)
 
     if retcode is not None:
-        create_tb_termination_flag()
+        terminate_tensorboard()
         exit(retcode)
