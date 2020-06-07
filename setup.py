@@ -16,7 +16,8 @@ setup(
     python_requires='>=3.6',
     entry_points={
         'console_scripts': [
-            'eisen_covid = covid_challenge.utils:cli'
+            'eisen_covid = covid_challenge.utils:cli',
+            'tensorboard_covid = covid_challenge.utils.tb'
         ],
     },
 )

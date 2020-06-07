@@ -3,10 +3,19 @@ import boto3
 import os
 import tempfile
 import json
+import signal
 
 from time import sleep
 from subprocess import Popen
 
+
+def create_tb_termination_flag():
+    with open('/tmp/results', 'w') as f:
+        f.write('')
+
+
+signal.signal(signal.SIGINT, create_tb_termination_flag)
+signal.signal(signal.SIGTERM, create_tb_termination_flag)
 
 s3 = boto3.client('s3')
 
@@ -48,4 +57,5 @@ while True:
     sleep(10)
 
     if retcode is not None:
+        create_tb_termination_flag()
         exit(retcode)
