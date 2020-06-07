@@ -17,7 +17,7 @@ setup(
     entry_points={
         'console_scripts': [
             'eisen_covid = covid_challenge.utils:cli',
-            'tensorboard_covid = covid_challenge.utils.tb'
+            'tensorboard_covid = covid_challenge.utils:tb'
         ],
     },
 )
