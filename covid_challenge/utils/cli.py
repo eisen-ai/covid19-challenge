@@ -10,7 +10,7 @@ from subprocess import Popen
 
 
 def create_tb_termination_flag():
-    with open('/tmp/results', 'w') as f:
+    with open('/tmp/results/terminate', 'w') as f:
         f.write('')
 
 
