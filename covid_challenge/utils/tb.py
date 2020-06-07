@@ -5,10 +5,9 @@ from subprocess import Popen
 
 tb_cmd = [
     'tensorboard',
-    'serve',
-    '--logdir /tmp/results',
-    '--host 0.0.0.0',
-    '--port 80'
+    '--logdir=/tmp/results',
+    '--host=0.0.0.0',
+    '--port=80'
 ]
 
 print('I am about to run Tensorboard via: {}'.format(tb_cmd))
