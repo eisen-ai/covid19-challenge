@@ -5,6 +5,7 @@ from subprocess import Popen
 
 tb_cmd = [
     'tensorboard',
+    'serve',
     '--logdir /tmp/results',
     '--host 0.0.0.0',
     '--port 80'
