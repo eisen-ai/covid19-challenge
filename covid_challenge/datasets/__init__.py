@@ -1,1 +1,1 @@
-from .cloud_datasets import S3MSDDataset
+from .cloud_datasets import S3MSDDataset, S3JsonDataset
