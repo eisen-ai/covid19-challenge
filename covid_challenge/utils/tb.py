@@ -5,6 +5,11 @@ from flask import Flask
 from subprocess import Popen
 from multiprocessing import Process
 
+from covid_challenge.utils.secret_ops import get_secret
+
+
+backend_key = get_secret('JOB_STATUS_UPDATE_KEY')['key']
+
 
 tb_cmd = [
     'tensorboard',
@@ -23,7 +28,7 @@ job_id = os.listdir('/tmp/results')[0]
 
 r = requests.post(
     'https://e2chj08pf8.execute-api.eu-central-1.amazonaws.com/v0/update-job-tb',
-    json={'job_id': job_id, 'public_ip': public_ip}
+    json={'job_id': job_id, 'public_ip': public_ip, 'key': backend_key}
 )
 
 print('I am about to run Tensorboard via: {}'.format(tb_cmd))
