@@ -12,56 +12,61 @@ from subprocess import Popen
 from covid_challenge.utils.secret_ops import get_secret
 
 
-backend_key = get_secret('JOB_STATUS_UPDATE_KEY')['key']
-
-
 def terminate_tensorboard():
     requests.get('http://127.0.0.1:6006/')
 
 
-signal.signal(signal.SIGINT, terminate_tensorboard)
-signal.signal(signal.SIGTERM, terminate_tensorboard)
+try:
+    backend_key = get_secret('JOB_STATUS_UPDATE_KEY')['key']
 
-s3 = boto3.client('s3')
+    signal.signal(signal.SIGINT, terminate_tensorboard)
+    signal.signal(signal.SIGTERM, terminate_tensorboard)
 
-config = sys.argv[1]
-config_epoch = sys.argv[2]
-data = sys.argv[3]
-results = sys.argv[4]
+    s3 = boto3.client('s3')
 
-config_path = os.path.join(results, 'config.json')
+    config = sys.argv[1]
+    config_epoch = sys.argv[2]
+    data = sys.argv[3]
+    results = sys.argv[4]
 
-os.makedirs(results)
+    config_path = os.path.join(results, 'config.json')
 
-config = json.loads(config)
+    os.makedirs(results)
 
-dirpath = tempfile.mkdtemp()
+    config = json.loads(config)
 
-config_path = os.path.join(dirpath, 'config.json')
+    dirpath = tempfile.mkdtemp()
 
-with open(config_path, 'w') as f:
-    json.dump(config, f)
+    config_path = os.path.join(dirpath, 'config.json')
+
+    with open(config_path, 'w') as f:
+        json.dump(config, f)
 
 
-eisen_cmd = ['python3',
-             '/opt/conda/bin/eisen',
-             'train',
-             config_path,
-             str(config_epoch),
-             '--data_dir={}'.format(data),
-             '--artifact_dir={}'.format(results)
-             ]
+    eisen_cmd = ['python3',
+                 '/opt/conda/bin/eisen',
+                 'train',
+                 config_path,
+                 str(config_epoch),
+                 '--data_dir={}'.format(data),
+                 '--artifact_dir={}'.format(results)
+                 ]
 
-print('I am about to run Eisen via: {}'.format(eisen_cmd))
+    print('I am about to run Eisen via: {}'.format(eisen_cmd))
 
-training = Popen(eisen_cmd)
+    training = Popen(eisen_cmd)
 
-job_id = os.listdir('/tmp/results')[0]
+    job_id = os.listdir('/tmp/results')[0]
 
-r = requests.post(
-    'https://e2chj08pf8.execute-api.eu-central-1.amazonaws.com/v0/update-job-status',
-    json={'job_id': job_id, 'status': 'Running', 'key': backend_key}
-)
+    r = requests.post(
+        'https://e2chj08pf8.execute-api.eu-central-1.amazonaws.com/v0/update-job-status',
+        json={'job_id': job_id, 'status': 'Running', 'key': backend_key}
+    )
+except:
+    r = requests.post(
+        'https://e2chj08pf8.execute-api.eu-central-1.amazonaws.com/v0/update-job-status',
+        json={'job_id': job_id, 'status': 'Failed', 'key': backend_key}
+    )
 
 while True:
     retcode = training.poll()
