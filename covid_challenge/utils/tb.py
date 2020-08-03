@@ -1,5 +1,6 @@
 import requests
 import os
+import json
 
 from flask import Flask
 from subprocess import Popen
@@ -8,7 +9,7 @@ from multiprocessing import Process
 from covid_challenge.utils.secret_ops import get_secret
 
 
-backend_key = get_secret('JOB_STATUS_UPDATE_KEY')['key']
+backend_key = json.loads(get_secret('JOB_STATUS_UPDATE_KEY'))['key']
 
 
 tb_cmd = [

@@ -16,57 +16,52 @@ def terminate_tensorboard():
     requests.get('http://127.0.0.1:6006/')
 
 
-try:
-    backend_key = get_secret('JOB_STATUS_UPDATE_KEY')['key']
+backend_key = json.loads(get_secret('JOB_STATUS_UPDATE_KEY'))['key']
 
-    signal.signal(signal.SIGINT, terminate_tensorboard)
-    signal.signal(signal.SIGTERM, terminate_tensorboard)
+signal.signal(signal.SIGINT, terminate_tensorboard)
+signal.signal(signal.SIGTERM, terminate_tensorboard)
 
-    s3 = boto3.client('s3')
+s3 = boto3.client('s3')
 
-    config = sys.argv[1]
-    config_epoch = sys.argv[2]
-    data = sys.argv[3]
-    results = sys.argv[4]
+config = sys.argv[1]
+config_epoch = sys.argv[2]
+data = sys.argv[3]
+results = sys.argv[4]
 
-    config_path = os.path.join(results, 'config.json')
+config_path = os.path.join(results, 'config.json')
 
-    os.makedirs(results)
+os.makedirs(results)
 
-    config = json.loads(config)
+config = json.loads(config)
 
-    dirpath = tempfile.mkdtemp()
+dirpath = tempfile.mkdtemp()
 
-    config_path = os.path.join(dirpath, 'config.json')
+config_path = os.path.join(dirpath, 'config.json')
 
-    with open(config_path, 'w') as f:
-        json.dump(config, f)
+with open(config_path, 'w') as f:
+    json.dump(config, f)
 
 
-    eisen_cmd = ['python3',
-                 '/opt/conda/bin/eisen',
-                 'train',
-                 config_path,
-                 str(config_epoch),
-                 '--data_dir={}'.format(data),
-                 '--artifact_dir={}'.format(results)
-                 ]
+eisen_cmd = ['python3',
+             '/opt/conda/bin/eisen',
+             'train',
+             config_path,
+             str(config_epoch),
+             '--data_dir={}'.format(data),
+             '--artifact_dir={}'.format(results)
+             ]
 
-    print('I am about to run Eisen via: {}'.format(eisen_cmd))
+print('I am about to run Eisen via: {}'.format(eisen_cmd))
 
-    training = Popen(eisen_cmd)
+training = Popen(eisen_cmd)
 
-    job_id = os.listdir('/tmp/results')[0]
+job_id = os.listdir('/tmp/results')[0]
 
-    r = requests.post(
-        'https://e2chj08pf8.execute-api.eu-central-1.amazonaws.com/v0/update-job-status',
-        json={'job_id': job_id, 'status': 'Running', 'key': backend_key}
-    )
-except:
-    r = requests.post(
-        'https://e2chj08pf8.execute-api.eu-central-1.amazonaws.com/v0/update-job-status',
-        json={'job_id': job_id, 'status': 'Failed', 'key': backend_key}
-    )
+r = requests.post(
+    'https://e2chj08pf8.execute-api.eu-central-1.amazonaws.com/v0/update-job-status',
+    json={'job_id': job_id, 'status': 'Running', 'key': backend_key}
+)
+
 
 while True:
     retcode = training.poll()
