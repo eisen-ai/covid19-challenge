@@ -27,7 +27,7 @@ class TensorboardSummaryHook(TBSH):
                                 z * watermark_size:(z + 1) * watermark_size,
                             ] = 0
 
-                        p = p + 1
+                    p = p + 1
 
         v = np.transpose(value, [0, 2, 1, 3, 4])
 
