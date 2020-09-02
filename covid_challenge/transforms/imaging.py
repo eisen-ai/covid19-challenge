@@ -75,7 +75,7 @@ class KeyFriendlyCompose(Compose):
             else:
                 for key in cur_keys:
                     t.fields = [key]
-                    if key in inp.keys() or isinstance(t, CreateConstantFlags, ModCreateConstantFlags):
+                    if key in inp.keys() or isinstance(t, (CreateConstantFlags, ModCreateConstantFlags)):
                         inp.update(t(inp))
             t.fields = cur_keys
 
